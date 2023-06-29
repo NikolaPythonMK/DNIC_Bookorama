@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <style>
+        body{
+            height: 100vh;
+        }
+        .title{
+            color: lightseagreen;
+        }
+        input[type=submit]{
+            
+        }
+    </style>
+</head>
+<body>
+    <div class="container d-flex flex-column justify-content-center align-items-center h-75">
+        {% if messages %}
+          <ul class="messages">
+            {% for message in messages %}
+              {% if message.tags == 'success' %}
+                <li  id="tmp" class="success text-success" style="font-weight: bold"><h3> {{ message }} </h3></li>
+               {% elif message.tags == 'error' %}
+                  <li id="tmp" class="success text-danger" style="font-weight: bold"><h3> {{ message }} </h3></li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+            <script>
+                let msg = document.getElementById("tmp")
+                setTimeout(function (){
+                    msg.remove()
+                }, 2000)
+            </script>
+        {% endif %}
+
+
+            {% if error_message %}
+                <span class="text-danger">{{ error_message }}</span>
+            {% endif %}
+
+
+        <h3 class="title mb-5">Discover, Buy, and Sell Books at Bookorama!</h3>
+
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <input type="text" id="username" name="username" placeholder="Username" class="mb-1"><br>
+            <input type="password" id="password" name="password" placeholder="Password" class="mb-1"><br>
+            <input type="submit" class="btn btn-outline-warning w-100 mb-3" value="Log In">
+        </form>
+        <p>Don't have an account? <a href="{% url 'register' %}">Register here.</a></p>
+    </div>
+</body>
+</html>

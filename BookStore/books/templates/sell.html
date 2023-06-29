@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <title>Sell Book</title>
+</head>
+<body>
+    {% extends 'base.html' %}
+
+    {% block content %}
+
+    <form class="container-fluid container-lg" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <h3 class="text-center mb-5">Sell Your Book Today!</h3>
+        <p class="text-center mb-5">Selling books made simple! Unlock the potential of your book collection and let them find their way into the hands of passionate readers.</p>
+
+        {% if errors %}
+            {% for error in errors %}
+                <p style="color: red; font-weight: bold">{{ error }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row mb-2">
+            <div class="col-10 col-md-5 mb-3">
+                <label for="img">Upload book cover:</label>
+                <input type="file" name="cover_image" class="form-control" id="img">
+                <label for="img" class="text-muted" style="font-size: 14px">Or you can upload the book cover image later on your profile</label>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-10 col-md-5">
+                <input type="text" class="form-control" placeholder="Enter title" name="title">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-10 col-md-5">
+                <input type="text" class="form-control" placeholder="Enter author's full name" name="author">
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-10 col-md-5">
+                <textarea rows="7" class="form-control"  placeholder="Write your description here..." name="description"></textarea>
+            </div>
+        </div>
+
+
+        <p>Choose genres:</p>
+        <div class="row mb-5">
+            <div class="col">
+               <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="book_genre" value="action" id="genre-action">
+                    <label for="genre-action" class="form-check-label">Action</label>
+                </div>
+
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="book_genre" value="adventure" id="genre-adventure">
+                    <label for="genre-adventure" class="form-check-label">Adventure</label>
+                </div>
+
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" name="book_genre" value="biography" id="genre-biography">
+                  <label for="genre-biography" class="form-check-label">Biography</label>
+                </div>
+
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" name="book_genre" value="children" id="genre-children">
+                  <label for="genre-children" class="form-check-label">Children</label>
+                </div>
+
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" name="book_genre" value="comedy" id="genre-comedy">
+                  <label for="genre-comedy" class="form-check-label">Comedy</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" name="book_genre" value="crime" id="genre-crime">
+                  <label for="genre-crime" class="form-check-label">Crime</label>
+                </div>
+
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" name="book_genre" value="drama" id="genre-drama">
+                  <label for="genre-drama" class="form-check-label">Drama</label>
+                </div>
+
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" name="book_genre" value="fantasy" id="genre-fantasy">
+                  <label for="genre-fantasy" class="form-check-label">Fantasy</label>
+                </div>
+
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" name="book_genre" value="historical_fiction" id="genre-historical-fiction">
+                  <label for="genre-historical-fiction" class="form-check-label">Historical Fiction</label>
+                </div>
+
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" name="book_genre" value="horror" id="genre-horror">
+                  <label for="genre-horror" class="form-check-label">Horror</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" name="book_genre" value="mystery" id="genre-mystery">
+                  <label for="genre-mystery" class="form-check-label">Mystery</label>
+                </div>
+
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" name="book_genre" value="romance" id="genre-romance">
+                  <label for="genre-romance" class="form-check-label">Romance</label>
+                </div>
+
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" name="book_genre" value="science_fiction" id="genre-science-fiction">
+                  <label for="genre-science-fiction" class="form-check-label">Science Fiction</label>
+                </div>
+
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" name="book_genre" value="self_help" id="genre-self-help">
+                  <label for="genre-self-help" class="form-check-label">Self-Help</label>
+                </div>
+
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" name="book_genre" value="thriller" id="genre-thriller">
+                  <label for="genre-thriller" class="form-check-label">Thriller</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" name="book_genre" value="western" id="genre-western">
+                  <label for="genre-western" class="form-check-label">Western</label>
+                </div>
+
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" name="book_genre" value="young_adult" id="genre-young-adult">
+                  <label for="genre-young-adult" class="form-check-label">Young Adult</label>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+        <div class="row mb-5">
+            <div class="col-10 col-md-5">
+                <div>
+                    <label>Enter Amount: </label>
+                    <input type="number"  class="input-field" min="0" name="price"> $
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-9 col-md-3">
+                <input type="submit" value="Post" class="btn btn-success w-100">
+            </div>
+        </div>
+    </form>
+    {% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+</body>
+</html>

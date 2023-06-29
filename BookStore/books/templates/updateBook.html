@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Change Details In Book</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <style>
+        .pad{
+            padding-right: 17.5px;
+        }
+    </style>
+</head>
+<body>
+    {% extends 'base.html' %}
+    {% block content %}
+    {% load static %}
+
+        <form method="GET" action="/profile/">
+            <button class="border-0 bg-white"><img src="{% static 'back-arrow.png' %}" width="50px" height="50px"></button>
+        </form>
+
+
+    <div class="container-fluid">
+        <div class="d-flex flex-column justify-content-center align-items-center">
+            {% if errors %}
+                {% for error in errors %}
+                    <p class="text-danger" style="font-weight: bold">{{ error }}</p>
+                {% endfor %}
+            {%  endif %}
+        </div>
+        <form method="POST" action="/update_book/"  class="row  justify-content-center justify-content-md-start" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="col-8 col-4 col-md-4 mb-5 d-flex flex-column align-items-center">
+                <h3 class="text-center">{{ book.title }}</h3>
+
+                <div class="w-75 mb-2 mt-3">
+                    <input type="file" name="cover_image" class="form-control-md">
+                </div>
+
+                {% if book.cover_image %}
+                    <img src="{{ MEDIA_URL }} {{ book.cover_image.url }}" class="w-75 mb-2">
+                {% else %}
+                    <img src="{% static 'no_image.png' %}" class="w-75 mb-2">
+                {% endif %}
+            </div>
+            <div class="col-8 col-md-7">
+                <div class="inf">
+                    <h4 class="mb-4">Information about the book</h4>
+                    <div class="mb-2">
+                        <label for="title" class="pad">Title:</label>
+                        <input type="text"  name="title" value="{{ book.title }}" id="title"><span class="text-danger"> * Must not be empty</span>
+                    </div>
+                    <div class="mb-2">
+                        <label for="author">Author: </label>
+                        <input type="text" name="author" value="{{ book.author }}" id="author">
+                    </div>
+
+                    <div>
+                        <label for="price">Price: $</label>
+                        <input type="number" name="price" value="{{ book.price }}" id="price"><span class="text-danger"> * Must not be empty</span>
+                    </div>
+
+                    <p class="mt-4">Choose genres:</p>
+                    <div class="row mb-5">
+                        <div class="col">
+                           <div class="form-check">
+                                <input type="checkbox" class="form-check-input" name="book_genre" value="action" id="genre-action">
+                                <label for="genre-action" class="form-check-label">Action</label>
+                            </div>
+
+                            <div class="form-check">
+                                <input {% if 'adventure' in genres %}checked{% else %}{% endif %}
+                                       type="checkbox"
+                                       class="form-check-input"
+                                       name="book_genre"
+                                       value="adventure"
+                                       id="genre-adventure">
+                                <label for="genre-adventure" class="form-check-label">Adventure</label>
+                            </div>
+
+                            <div class="form-check">
+                              <input {% if 'biography   ' in genres %}checked{% else %}{% endif %} type="checkbox" class="form-check-input" name="book_genre" value="biography" id="genre-biography">
+                              <label for="genre-biography" class="form-check-label">Biography</label>
+                            </div>
+
+                            <div class="form-check">
+                              <input {% if 'children' in genres %}checked{% else %}{% endif %} type="checkbox" class="form-check-input" name="book_genre" value="children" id="genre-children">
+                              <label for="genre-children" class="form-check-label">Children</label>
+                            </div>
+
+                            <div class="form-check">
+                              <input {% if 'comedy' in genres %}checked{% else %}{% endif %} type="checkbox" class="form-check-input" name="book_genre" value="comedy" id="genre-comedy">
+                              <label for="genre-comedy" class="form-check-label">Comedy</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-check">
+                              <input {% if 'crime' in genres %}checked{% else %}{% endif %} type="checkbox" class="form-check-input" name="book_genre" value="crime" id="genre-crime">
+                              <label for="genre-crime" class="form-check-label">Crime</label>
+                            </div>
+
+                            <div class="form-check">
+                              <input {% if 'drama' in genres %}checked{% else %}{% endif %} type="checkbox" class="form-check-input" name="book_genre" value="drama" id="genre-drama">
+                              <label for="genre-drama" class="form-check-label">Drama</label>
+                            </div>
+
+                            <div class="form-check">
+                              <input {% if 'fantasy' in genres %}checked{% else %}{% endif %} type="checkbox" class="form-check-input" name="book_genre" value="fantasy" id="genre-fantasy">
+                              <label for="genre-fantasy" class="form-check-label">Fantasy</label>
+                            </div>
+
+                            <div class="form-check">
+                              <input {% if 'historical_fiction' in genres %}checked{% else %}{% endif %} type="checkbox" class="form-check-input" name="book_genre" value="historical_fiction" id="genre-historical-fiction">
+                              <label for="genre-historical-fiction" class="form-check-label">Historical Fiction</label>
+                            </div>
+
+                            <div class="form-check">
+                              <input {% if 'horror' in genres %}checked{% else %}{% endif %} type="checkbox" class="form-check-input" name="book_genre" value="horror" id="genre-horror">
+                              <label for="genre-horror" class="form-check-label">Horror</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-check">
+                              <input {% if 'mystery' in genres %}checked{% else %}{% endif %} type="checkbox" class="form-check-input" name="book_genre" value="mystery" id="genre-mystery">
+                              <label for="genre-mystery" class="form-check-label">Mystery</label>
+                            </div>
+
+                            <div class="form-check">
+                              <input {% if 'romance' in genres %}checked{% else %}{% endif %} type="checkbox" class="form-check-input" name="book_genre" value="romance" id="genre-romance">
+                              <label for="genre-romance" class="form-check-label">Romance</label>
+                            </div>
+
+                            <div class="form-check">
+                              <input {% if 'science_fiction' in genres %}checked{% else %}{% endif %} type="checkbox" class="form-check-input" name="book_genre" value="science_fiction" id="genre-science-fiction">
+                              <label for="genre-science-fiction" class="form-check-label">Science Fiction</label>
+                            </div>
+
+                            <div class="form-check">
+                              <input {% if 'self_help' in genres %}checked{% else %}{% endif %} type="checkbox" class="form-check-input" name="book_genre" value="self_help" id="genre-self-help">
+                              <label for="genre-self-help" class="form-check-label">Self-Help</label>
+                            </div>
+
+                            <div class="form-check">
+                              <input {% if 'thriller' in genres %}checked{% else %}{% endif %} type="checkbox" class="form-check-input" name="book_genre" value="thriller" id="genre-thriller">
+                              <label for="genre-thriller" class="form-check-label">Thriller</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-check">
+                              <input {% if 'western' in genres %}checked{% else %}{% endif %} type="checkbox" class="form-check-input" name="book_genre" value="western" id="genre-western">
+                              <label for="genre-western" class="form-check-label">Western</label>
+                            </div>
+
+                            <div class="form-check">
+                              <input {% if 'young_adult' in genres %}checked{% else %}{% endif %} type="checkbox" class="form-check-input" name="book_genre" value="young_adult" id="genre-young-adult">
+                              <label for="genre-young-adult" class="form-check-label">Young Adult</label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="desc w-100">
+                    <h4>Description</h4>
+                    <textarea name="description" class="w-100" rows="10">{{ book.description }}</textarea>
+                </div>
+
+                <p class="mb-1 mt-3">Added on: {{ book.added_on }}</p>
+                <p>Rating: {{ book.rating|floatformat:1 }}/5</p>
+                <p>Uploaded from: {{ book.user }}</p>
+
+                <input type="hidden" name="book_id" value="{{ book.pk }}">
+                <button type="submit" class="btn btn-success w-50 mt-3">Save</button>
+            </div>
+        </form>
+
+    </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+
+    {% endblock %}
+</body>
+</html>

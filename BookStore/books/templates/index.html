@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <title>Bookorama</title>
+    <style>
+        .fav-icon{
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+        }
+        .book-prop{
+            font-size: 13px;
+        }
+        .no_img{
+            width: 184px;
+            height: 255px;
+        }
+    </style>
+</head>
+<body>
+{% extends 'base.html' %}
+
+    {% block content %}
+        {% load static %}
+
+        <div class="container">
+            {% if reserved %}
+                {% if is_search and search_result %}
+                    <h4 class="mb-4">Search results for "{{ book_name }}"</h4>
+                {% elif is_select %}
+                    <h4 class="mb-4">Results for the genres: {% for g in input_genres %}{{ g|title }}{% if not forloop.last %}, {% endif %}{% endfor %}</h4>
+                {% else %}
+                    <h4> {{ message }} </h4>
+                {% endif %}
+                <div class="card-layout row row-cols-2 row-cols-md-5">
+                {% for book in search_result %}
+                    <div class="col">
+                        <div class="card mb-4">
+                            {% if book.cover_image %}
+                                <img src="{{ MEDIA_URL }} {{ book.cover_image.url }}" class="card-img-top w-100" alt="...">
+                            {% else %}
+                                <img src="{% static 'no_image.png' %}" class="card-img-top w-100 no_img">
+                            {% endif %}
+                            <div class="card-body">
+                                <p class="card-title mb-1">{{ book.title }}</p>
+                                <div class="d-flex justify-content-between">
+                                    <p class="card-text book-prop mb-1">{{ book.author }}</p>
+                                    <h6 class="card-subtitle mb-1 mt-1">${{ book.price }}</h6>
+                                </div>
+
+                                <div class="d-flex justify-content-center mb-1 mt-1">
+                                    {% if book.rating == 0 %}
+                                        <img src="{% static 'zero-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 0.25 and book.rating < 0.75 %}
+                                        <img src="{% static 'half-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 0.75 and book.rating < 1.25 %}
+                                        <img src="{% static 'one-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 1.25 and book.rating < 1.75 %}
+                                        <img src="{% static 'one-half-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 1.75 and book.rating < 2.25 %}
+                                        <img src="{% static 'two-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 2.25 and book.rating < 2.75 %}
+                                        <img src="{% static 'two-half-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 2.75 and book.rating < 3.25 %}
+                                        <img src="{% static 'three-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 3.25 and book.rating < 3.75 %}
+                                        <img src="{% static 'three-half-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 3.75 and book.rating < 4.25 %}
+                                        <img src="{% static 'four-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 4.25 and book.rating < 4.75 %}
+                                        <img src="{% static 'four-half-stars.jpg' %}" width="150" height="35">
+                                    {% else %}
+                                        <img src="{% static 'five-stars.jpg' %}" width="150" height="35">
+                                    {% endif %}
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <form method="POST" action="/details/">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="book_id" value="{{ book.pk }}">
+                                        <input type="submit" value="Details" class="btn btn-outline-success details-btn">
+                                    </form>
+                                    <form action="/favourites/" class="favourites">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="bookid" value="{{ book.pk }}">
+                                        <button type="submit" class="border-0 bg-white">
+                                            <img src="{% static 'heart.svg' %}" class="fav-icon" id="fav">
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+                <hr>
+            {% endif %}
+
+            <h3 class="mb-2">All Books</h3>
+            <div class="card-layout row row-cols-2 row-cols-md-5">
+                {% for book in books %}
+                    <div class="col">
+                        <div class="card mb-4">
+                            {% if book.cover_image %}
+                                <img src="{{ MEDIA_URL }} {{ book.cover_image.url }}" class="card-img-top w-100" alt="...">
+                            {% else %}
+                                <img src="{% static 'no_image.png' %}" class="card-img-top w-100 no_img">
+                            {% endif %}
+                            <div class="card-body">
+                                <p class="card-title mb-1">{{ book.title }}</p>
+                                <div class="d-flex justify-content-between">
+                                    <p class="card-text book-prop mb-1">{{ book.author }}</p>
+                                    <h6 class="card-subtitle mb-1 mt-1">${{ book.price }}</h6>
+                                </div>
+
+                                <div class="d-flex justify-content-center mb-1 mt-1">
+                                    {% if book.rating == 0 %}
+                                        <img src="{% static 'zero-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 0.25 and book.rating < 0.75 %}
+                                        <img src="{% static 'half-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 0.75 and book.rating < 1.25 %}
+                                        <img src="{% static 'one-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 1.25 and book.rating < 1.75 %}
+                                        <img src="{% static 'one-half-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 1.75 and book.rating < 2.25 %}
+                                        <img src="{% static 'two-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 2.25 and book.rating < 2.75 %}
+                                        <img src="{% static 'two-half-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 2.75 and book.rating < 3.25 %}
+                                        <img src="{% static 'three-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 3.25 and book.rating < 3.75 %}
+                                        <img src="{% static 'three-half-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 3.75 and book.rating < 4.25 %}
+                                        <img src="{% static 'four-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 4.25 and book.rating < 4.75 %}
+                                        <img src="{% static 'four-half-stars.jpg' %}" width="150" height="35">
+                                    {% else %}
+                                        <img src="{% static 'five-stars.jpg' %}" width="150" height="35">
+                                    {% endif %}
+                                </div>
+
+                                <div class="d-flex justify-content-between">
+                                    <form method="POST" action="/details/">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="book_id" value="{{ book.pk }}">
+                                        <input type="submit" value="Details" class="btn btn-outline-success details-btn">
+                                    </form>
+                                    <form action="/favourites/" class="favourites">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="bookid" value="{{ book.pk }}">
+                                        <button type="submit" class="border-0 bg-white">
+                                            <img src="{% static 'heart.svg' %}" class="fav-icon" id="fav">
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    <nav aria-label="Book Pagination" class="d-flex flex-column justify-content-center align-items-center mb-0 mt-2">
+       <p class="mb-1 p-0 text-muted" style="font-size: 14px">Showing 20 books per page.</p>
+        <ul class="pagination d-flex justify-content-center mt-0">
+            {% if books.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo; First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ books.previous_page_number }}">Previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo; First</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+            {% endif %}
+
+            {% for num in books.paginator.page_range %}
+                {% if num == books.number %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if books.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ books.next_page_number }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ books.paginator.num_pages }}">Last &raquo;</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">Last &raquo;</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+
+        <script>
+            let images = document.getElementsByClassName("fav-icon")
+            for (let i = 0; i < images.length; i++){
+                images[i].addEventListener("click", () => {
+                    images[i].src = "{% static 'heart-animated.gif' %}"
+                    setTimeout(function (){
+                        images[i].src = "{% static 'heart.svg' %}"
+                    }, 1000)
+                })
+            }
+
+            $(".favourites").submit(function(event) {
+
+                /* stop form from submitting normally */
+                event.preventDefault();
+
+                /* get some values from elements on the page: */
+                var $form = $(this),
+                    term = $form.find('input[name="bookid"]').val(),
+                    url = $form.attr('action');
+
+                /* Send the data using post */
+                var posting = $.post(url, {
+                    book_id: term,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                });
+
+                /* Put the results in a div */
+                posting.done(function(data) {
+                    var content = $(data).find('#content');
+                    $("#result").empty().append(content);
+                });
+            });
+        </script>
+        {% endblock %}
+
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+</body>
+</html>

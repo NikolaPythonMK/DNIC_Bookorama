@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./bootstrap-5.3.0-alpha1-dist/css/bootstrap.css">
+    <title>Document</title>
+    <style>
+        .category-el{
+            color: #198754
+       }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark pb-3 mb-2">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="./index.html">BookStore</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav  mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="./index.html">Home</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <span class="category-el">Category</span>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Novel</a></li>
+                    <li><a class="dropdown-item" href="#">Nonfiction</a></li>
+                    <li><a class="dropdown-item" href="#">Fiction</a></li>
+                    <li><a class="dropdown-item" href="#">Science Fiction</a></li>
+                    <li><a class="dropdown-item" href="#">Philosophy</a></li>
+                    <li><a class="dropdown-item" href="#">Comedy</a></li>
+                    <li><a class="dropdown-item" href="#">Romance</a></li>
+                    <li><a class="dropdown-item" href="#">Classics</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                </ul>
+              </li>
+            </ul>
+            <form class="d-flex w-50">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+              <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="./sell.html">Sell</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./favourites.html">Favourites</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./profile.html">Profile</a>
+                </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    <a href="./index.html" class="m-2"><img src="./back-arrow.png" width="50px" height="50px"></a>
+
+    <div class="container-fluid">
+        <div class="row  justify-content-center justify-content-md-start">
+            <div class="col-8 col-4 col-md-4 mb-5">
+                <h1 class="text-center">Lorem Ipsun</h1>
+                <img src="./img.png" class="w-100">
+                <div class="d-flex flex-column justify-content-center align-items-center">
+                    <a href="./purchase.html" class="btn btn-success w-50 mb-1">Purchase</a>
+                    <button class="btn btn-secondary w-50">Save to favourites</button>
+                </div>
+            </div>
+            <div class="col-8 col-md-7">
+                <div class="inf">
+                    <h4>Information about the book</h4>
+                    <p>Title: Lorem Ipsun</p>
+                    <p>Author: John Smith</p>
+                    <p>Added on: 5/15/2023</p>
+                    <p>Price: $9.99</p>
+                    <p>Genres: <a href="#">Philosophy</a> <a href="#">Nonfiction</a> <a href="#">Classics</a></p>
+                    <p>Rating: 9/10</p>
+                    
+                </div>
+                <div class="desc">
+                    <h4>Description</h4>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere unde excepturi nesciunt accusantium quos ullam officia sunt, obcaecati praesentium veritatis harum corporis, repellat quia provident quas aut laudantium in. Soluta impedit voluptatem harum provident commodi ut minima veniam sit quisquam deleniti rem inventore voluptatibus ullam quaerat nulla quae iusto eligendi, pariatur eveniet repellat doloribus? Totam consequuntur natus minima nihil quia vel accusamus temporibus molestiae quos soluta, quaerat ullam iste. Voluptatibus dicta perspiciatis quisquam, ducimus eius dolorum vitae necessitatibus nam iusto.
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="./bootstrap-5.3.0-alpha1-dist/js/bootstrap.bundle.js"></script>
+  </body>
+</html>

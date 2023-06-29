@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <style>
+        .floating-element {
+            position: absolute;
+            top: 100px;
+            left: 25%;
+        }
+        .rate-btn{
+            margin-left: 15px;
+        }
+        #payment-status-success, #payment-status-processing, #payment-status-failed{
+            display: none;
+        }
+        li{
+            color: darkred;
+        }
+        .link-genre{
+            color: royalblue;
+        }
+    </style>
+</head>
+<body>
+    {% extends 'base.html' %}
+    {% block content %}
+    {% load static %}
+
+        <form method="GET" action="/index/">
+            <button class="border-0 bg-white"><img src="{% static 'back-arrow.png' %}" width="50px" height="50px"></button>
+        </form>
+
+        {% if saved %}
+            <p class="text-success display-5 text-center floating-element" id="saved-info">Your book has been saved.</p>
+            <script>
+                let msg = document.getElementById("saved-info")
+                setTimeout(function (){
+                    msg.remove()
+                }, 1300)
+            </script>
+        {% endif %}
+
+        {% if rate_book_called %}
+            {% if rated_successfully %}
+                <p class="text-success display-5 text-center floating-element" id="saved-info">{{ message }}</p>
+            {% else %}
+                <p class="text-danger display-5 text-center floating-element" id="saved-info">{{ message }}</p>
+            {% endif %}
+            <script>
+                let msg = document.getElementById("saved-info")
+                setTimeout(function (){
+                    msg.remove()
+                }, 2000)
+            </script>
+        {% endif %}
+
+    <div class="container-fluid">
+        <div class="row  justify-content-center justify-content-md-start">
+            <div class="col-8 col-4 col-md-4 mb-5 d-flex flex-column align-items-center">
+                <h3 class="text-center">{{ book.title }}</h3>
+
+                {% if book.cover_image %}
+                    <img src="{{ MEDIA_URL }} {{ book.cover_image.url }}" class="w-75 mb-2">
+                {% else %}
+                    <img src="{% static 'no_image.png' %}" class="w-75 mb-2">
+                {% endif %}
+
+                <h1 class="display-4 mb-3" style="color: green; font-weight: normal">{{ book.price|floatformat:0  }}$</h1>
+
+                <div class="d-flex flex-column justify-content-center align-items-center w-100">
+                     <a href="./purchase.html" class="btn btn-success w-50 mb-1" data-bs-toggle="modal" data-bs-target="#purchaseModal">Purchase</a>
+{#                    {% if purchase_permission %}#}
+{#                        <a href="./purchase.html" class="btn btn-success w-50 mb-1" data-bs-toggle="modal" data-bs-target="#purchaseModal">Purchase</a>#}
+{#                    {% else %}#}
+{#                        <a href="./purchase.html" class="btn btn-success w-50 mb-1" data-bs-toggle="modal" data-bs-target="#purchasePermission">Purchase</a>#}
+{#                    {% endif %}#}
+
+                    <form method="POST" action="/save_book_details/" class="w-100 d-flex justify-content-center">
+                        {% csrf_token %}
+                        <input type="hidden" name="book_id" value="{{ book.pk }}">
+                        <button type="submit" class="btn btn-secondary w-50">Save to favourites</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-8 col-md-7">
+                <div class="inf">
+                    <h4>Information about the book</h4>
+                    <p>Title: {{ book.title }}</p>
+                    <p>Author: {% if book.author %} {{ book.author }} {% else %} {{ "/" }} {% endif %}</p>
+                    <p>Added on: {{ book.added_on }}</p>
+                    <div class="mb-3">
+                        Genres:
+                        {% for g in genres %}
+                            <form method="POST" action="/index/" style="display: inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="input_genre" value="{{ g.genre }}">
+                                <button type="submit" class="border-0 bg-white" style="display: inline"><span class="link-genre">{{ g.genre|capfirst }}</span></button>
+                            </form>
+                        {% endfor %}
+                    </div>
+                    <p>Rating: {{ book.rating|floatformat:1 }}/5</p>
+                    <p>Uploaded from: <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">{{ book.user }}</a></p>
+
+                </div>
+                <div class="desc">
+                    <h4>Description</h4>
+                    <p>{{ book.description }}</p>
+                </div>
+                <hr>
+                <form class="mt-4 w-50" method="POST" action="/rate_book/">
+                    {% csrf_token %}
+                        <input type="hidden" name="book_id" value="{{ book.pk }}">
+                        <label  class="form-label" for="book_rating">Rate the book:</label>
+                        <div class="d-flex">
+                        <select class="form-select" name="book_rating">
+                            {% if rated %} <option value="0" class="text-warning">None</option> {% endif %}
+                            <option value="1" {% if rated == 1 %}selected{% endif %}>Poor</option>
+                            <option value="2" {% if rated == 2 %}selected{% endif %}>Fair</option>
+                            <option value="3" {% if rated == None or rated == 3 %}selected{% endif %}>Average</option>
+                            <option value="4" {% if rated == 4 %}selected{% endif %}>Good</option>
+                            <option value="5" {% if rated == 5 %}selected{% endif %}>Excellent</option>
+                        </select>
+                        <button class="btn btn-primary rate-btn" type="submit">Rate</button>
+                        </div>
+                {% if rated %}
+                    <p>
+                        Your rate on this book:
+                        {% if rated == 5 %}
+                            Excellent
+                        {% elif rated == 4 %}
+                            Good
+                        {% elif rated == 3 %}
+                            Average
+                        {% elif rated == 2 %}
+                            Fair
+                        {% elif rated == 1 %}
+                            Poor
+                        {% endif %}
+                    </p>
+                {% endif %}
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Contact Information</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <p>Email: {{ book.user.email }}</p>
+          <p>Phone number: {% if phone %}{{ phone }}{% else %} This user has not provided a phone number. {% endif %}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Pay Invoice</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <form class="row" id="credit-card-form">
+              {% csrf_token %}
+              <input type="hidden"  id="book_id" name="book_id" value="{{ book.pk }}">
+              <div class="col-10">
+                  <input type="text" name="name" class="form-control" placeholder="Name" required>
+              </div>
+              <div class="col-10 mt-3">
+                  <input type="text" id="card-number" name="card_number" class="form-control" placeholder="Card Number" required>
+              </div>
+              <div class="col-10">
+                  <div class="row d-flex justify-content-between mt-3">
+                      <div class="col-md-6 col-10">
+                          <input type="text" id="expiration-date" name="expiration" class="form-control" placeholder="Expiration (mm/yy)" required>
+                      </div>
+                      <div class="col-md-6 col-10">
+                          <input type="text"  id="cvc" name="cvc" class="form-control mt-1" placeholder="CVC" required>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-10">
+                  <button disabled class="btn btn-info w-100 mt-3"><span class="text-white">total: {{ book.price }}$</span></button>
+              </div>
+              <div class="col-10">
+                  <button  type="submit" id="sub" class="btn btn-primary w-100 mt-1">Pay</button>
+              </div>
+          </form>
+          <div id="payment-status-processing">
+              <div class="spinner-grow text-primary" role="status">
+              </div>
+              <labe class="text-primary">Your payment is processing. This will take a few seconds...</labe>
+          </div>
+          <div id="payment-status-success">
+              <p class="text-success mt-1">Your transaction has been successful. You can now view your purchase in your profile.</p>
+          </div>
+          <div id="payment-status-failed">
+              <p class="text-danger mt-1">Invalid input. Please check your card details.</p>
+              <ul id="failed-labels">
+
+              </ul>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+  </div>
+
+
+        <div class="modal fade" id="purchasePermission" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Oops</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <h5 class="text-danger">You cannot purchase your own book.</h5>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+        <script>
+            document.getElementById("credit-card-form").addEventListener("submit", function (event){
+                event.preventDefault()
+                document.getElementById('payment-status-processing').style.display = 'block';
+                document.getElementById('payment-status-success').style.display = 'none';
+                document.getElementById('payment-status-failed').style.display = 'none';
+
+
+                  let cardNumber = document.getElementById('card-number').value;
+                  let cvc = document.getElementById('cvc').value;
+                  let expirationDate = document.getElementById('expiration-date').value;
+
+                  let isCardNumberValid = isValidCardNumber(cardNumber);
+                  let isCvcValid = isValidCvc(cvc);
+                  let isExpirationDateValid = isValidExpirationDate(expirationDate);
+
+
+                if (isCardNumberValid && isCvcValid && isExpirationDateValid){
+                    setTimeout(function (){
+                        document.getElementById('payment-status-processing').style.display = 'none';
+                        document.getElementById('payment-status-success').style.display = 'block';
+                        const formData = new FormData();
+                        formData.append('book_id', document.getElementById("book_id").value);
+                        formData.append('card_number', document.getElementById("card-number").value);
+                        formData.append('cvc', document.getElementById("cvc").value);
+                        formData.append('expiration_date', document.getElementById("expiration-date").value);
+
+                          const csrftoken = getCookie('csrftoken'); // Extract the CSRF token from the cookie
+
+                        fetch('/purchase/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-CSRFToken': csrftoken
+                            },
+                            body: new URLSearchParams(formData)
+                        }).then(function (response){
+                                console.log(response)
+                        })
+                    }, 3000)
+                }
+                else{
+                        let errors = document.getElementById("failed-labels");
+                        while (errors.firstChild) {
+                          errors.removeChild(errors.firstChild);
+                        }
+                        if(!isCardNumberValid){
+                            let newOption = document.createElement('li')
+                            newOption.textContent = 'Make sure your card number contains 16 digits with no space in between';
+                            errors.appendChild(newOption)
+                        }
+                        if(!isCvcValid){
+                            let newOption = document.createElement('li');
+                            newOption.textContent = 'Make sure your cvc is correct (3 or 4 digits usually found on the signature strip)';
+                            errors.appendChild(newOption)
+                        }
+                        if(!isExpirationDateValid){
+                            let newOption = document.createElement('li');
+                            newOption.textContent = 'Make sure your expiration date is valid (example: 02/22)';
+                            errors.appendChild(newOption)
+                        }
+                        document.getElementById('payment-status-processing').style.display = 'none';
+                        document.getElementById('payment-status-failed').style.display = 'block';
+                }
+
+                /*setTimeout(function (){
+                    if (isCardNumberValid && isCvcValid && isExpirationDateValid) {
+                        document.getElementById('payment-status-processing').style.display = 'none';
+                        document.getElementById('payment-status-success').style.display = 'block';
+                        const formData = new FormData();
+                        formData.append('book_id', document.getElementById("book_id").value);
+                        formData.append('card_number', document.getElementById("card-number").value);
+                        formData.append('cvc', document.getElementById("cvc").value);
+                        formData.append('expiration_date', document.getElementById("expiration-date").value);
+
+                          const csrftoken = getCookie('csrftoken'); // Extract the CSRF token from the cookie
+
+                        fetch('/purchase/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-CSRFToken': csrftoken
+                            },
+                            body: new URLSearchParams(formData)
+                        }).then(function (response){
+                                console.log(response)
+                        })
+
+                    }
+                    else{
+                        let errors = document.getElementById("failed-labels");
+                        while (errors.firstChild) {
+                          errors.removeChild(errors.firstChild);
+                        }
+                        if(!isCardNumberValid){
+                            let newOption = document.createElement('li')
+                            newOption.textContent = 'Make sure your card number contains 16 digits with no space in between';
+                            errors.appendChild(newOption)
+                        }
+                        if(!isCvcValid){
+                            let newOption = document.createElement('li');
+                            newOption.textContent = 'Make sure your cvc is correct (3 or 4 digits usually found on the signature strip)';
+                            errors.appendChild(newOption)
+                        }
+                        if(!isExpirationDateValid){
+                            let newOption = document.createElement('li');
+                            newOption.textContent = 'Make sure your expiration date is valid (example: 02/22)';
+                            errors.appendChild(newOption)
+                        }
+                        document.getElementById('payment-status-processing').style.display = 'none';
+                        document.getElementById('payment-status-failed').style.display = 'block';
+                    }
+                }, 3000) */
+            })
+
+            function isValidCardNumber(cardNumber){
+                  let cardNumberPattern = /^[0-9]{16}$/;
+                  return cardNumberPattern.test(cardNumber);
+            }
+
+            function isValidCvc(cvc){
+                  let cvcPattern = /^[0-9]{3,4}$/; // Assuming cvc length is 3 or 4 digits
+                  return cvcPattern.test(cvc);
+            }
+
+            function isValidExpirationDate(expirationDate){
+                  let expirationDatePattern = /^(0[1-9]|1[0-2])\/([0-9]{2})$/; // Assuming MM/YY format
+                  return expirationDatePattern.test(expirationDate)
+            }
+            function getCookie(name) {
+              const cookieValue = document.cookie.match('(^|;)\\s*' + name + '=([^;]*)');
+              return cookieValue ? cookieValue.pop() : '';
+            }
+
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+  </div>
+    {% endblock %}
+</body>
+</html>

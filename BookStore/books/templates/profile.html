@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <title>Profile</title>
+    <style>
+        .category-el{
+            color: #198754
+        }
+        .fav-icon{
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+        }
+        img{
+            {#width: 50px;#}
+            {#height: 200px;#}
+        }
+        .book-prop{
+            font-size: 13px;
+        }
+        .no_img{
+            width: 184px;
+            height: 255px;
+        }
+        body{
+            {#background-color: #eee;#}
+        }
+        .floating-element {
+            position: absolute;
+            top: 100px;
+            left: 25%;
+        }
+        .refund-bg-gray{
+            background-color: #eee;
+        }
+        .refund-bg-white{
+            background-color: #fff;
+        }
+        .hide-el{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+   {% extends 'base.html' %}
+
+   {% block content %}
+
+
+     {% load static %}
+      <div class="container">
+        {% if messages %}
+          <ul class="messages">
+            {% for message in messages %}
+              {% if message.tags == 'success' %}
+                <li  id="tmp" class="success text-success" style="font-weight: bold"><h3> {{ message }} </h3></li>
+               {% elif message.tags == 'error' %}
+                  <li id="tmp" class="success text-danger" style="font-weight: bold"><h3> {{ message }} </h3></li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+            <script>
+                let msg = document.getElementById("tmp")
+                setTimeout(function (){
+                    msg.remove()
+                }, 2000)
+            </script>
+        {% endif %}
+
+
+        {% if refund_success %}
+            <div class="d-flex justify-content-center">
+                <span id="refund-el"  class="text-success display-4" style="font-weight: bold">{{ message }}</span>
+            </div>
+            <script>
+                let msg = document.getElementById("refund-el")
+                setTimeout(function (){
+                    msg.remove()
+                }, 1300)
+            </script>
+        {% else %}
+            <div class="d-flex justify-content-center">
+                <span id="refund-el" class="text-danger display-1" style="font-weight: bold">{{ message }}</span>
+            </div>
+            <script>
+                let msg = document.getElementById("refund-el")
+                setTimeout(function (){
+                    msg.remove()
+                }, 1300)
+            </script>
+        {% endif %}
+
+        <h2>{{ settings.user }}'s posts</h2>
+              {% if deleted %}
+            <p class="text-success display-5 text-center floating-element" id="saved-info">Your book has been deleted successfully.</p>
+            <script>
+                let msg = document.getElementById("saved-info")
+                setTimeout(function (){
+                    msg.remove()
+                }, 1300)
+            </script>
+        {% endif %}
+        {% if  not books %} <p>No books found in your profile. Post a book to start building your collection.</p> {% endif %}
+            <div class="card-layout row row-cols-2 row-cols-md-5">
+                {% for book in books %}
+                    <div class="col">
+                        <div class="card mb-4">
+                            {% if book.cover_image %}
+                                <img src="{{ MEDIA_URL }} {{ book.cover_image.url }}" class="card-img-top w-100" alt="...">
+                            {% else %}
+                                <img src="{% static 'no_image.png' %}" class="card-img-top w-100 no_img">
+                            {% endif %}
+                            <div class="card-body">
+                                <p class="card-title mb-1">{{ book.title }}</p>
+                                {#                                <p class="card-text book-prop mb-1">{{ book.author }}</p>#}
+                                <div class="d-flex justify-content-between">
+                                    <p class="card-text book-prop mb-1">{{ book.author }}</p>
+                                    <h6 class="card-subtitle mb-1 mt-1">${{ book.price }}</h6>
+                                </div>
+{#                                <h6 class="card-subtitle mb-1 mt-1">${{ book.price }}</h6>#}
+
+                                <div class="d-flex justify-content-center mb-1 mt-1">
+                                    {% if book.rating == 0 %}
+                                        <img src="{% static 'zero-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 0.25 and book.rating < 0.75 %}
+                                        <img src="{% static 'half-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 0.75 and book.rating < 1.25 %}
+                                        <img src="{% static 'one-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 1.25 and book.rating < 1.75 %}
+                                        <img src="{% static 'one-half-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 1.75 and book.rating < 2.25 %}
+                                        <img src="{% static 'two-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 2.25 and book.rating < 2.75 %}
+                                        <img src="{% static 'two-half-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 2.75 and book.rating < 3.25 %}
+                                        <img src="{% static 'three-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 3.25 and book.rating < 3.75 %}
+                                        <img src="{% static 'three-half-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 3.75 and book.rating < 4.25 %}
+                                        <img src="{% static 'four-stars.jpg' %}" width="150" height="35">
+                                    {% elif book.rating >= 4.25 and book.rating < 4.75 %}
+                                        <img src="{% static 'four-half-stars.jpg' %}" width="150" height="35">
+                                    {% else %}
+                                        <img src="{% static 'five-stars.jpg' %}" width="150" height="35">
+                                    {% endif %}
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <form method="POST" action="/get_update_book/">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="book_id" value="{{ book.pk }}">
+                                        <button type="submit" class="btn btn-outline-success details-btn">Details</button>
+                                    </form>
+                                    <button data-bookid="{{ book.pk }}" data-title="{{ book.title }}" class="border-0 bg-white deleteButton" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                        <img src="{% static 'icon-trash.png' %}" class="fav-icon">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+                {% if books %}
+                   <nav aria-label="Book Pagination" class="d-flex flex-column justify-content-center align-items-center mb-0 mt-2">
+                   <p class="mb-1 p-0 text-muted" style="font-size: 14px">Showing 20 books per page.</p>
+            <ul class="pagination d-flex justify-content-center">
+                {% if books.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">&laquo; First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ books.previous_page_number }}">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&laquo; First</span>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link">Previous</span>
+                    </li>
+                {% endif %}
+
+                {% for num in books.paginator.page_range %}
+                    {% if num == books.number %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if books.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ books.next_page_number }}">Next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ books.paginator.num_pages }}">Last &raquo;</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Next</span>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link">Last &raquo;</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+      </div>
+
+
+       {% if transactions %}
+          <div class="container mt-5 mb-5">
+           <hr>
+               <h3>All transactions</h3>
+                <span class="" style="font-weight: bold">You have 24 hours to refund the transaction if you change your mind.</span>
+               <table class="table table-striped mt-4">
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Book</th><th>Cost</th><th>Purchased at</th><th>Purchased from</th><th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            {% for transaction in transactions %}
+                                <tr>
+                                    <td>{{ transaction.pk }}</td>
+                                    <td>{{ transaction.book.title }}</td>
+                                    <td>{{ transaction.book.price }} $</td>
+                                    <td>{{ transaction.purchased_at }}</td>
+                                    <td>{{ transaction.book.user }}</td>
+                                    <td>
+                                        <form method="POST" action="/refund_request/">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="transaction_id" value="{{ transaction.pk }}">
+                                            <button type="submit" class="border-0 m-0 p-0 refund-btn">
+                                                <img  class="fav-icon" src="{% static 'unsave-icon.png' %}">
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                    </tbody>
+               </table>
+
+
+              <nav aria-label="Transaction Pagination" class="d-flex flex-column justify-content-center align-items-center mb-0 mt-2">
+             <p class="mb-1 p-0 text-muted" style="font-size: 14px">Showing 10 transactions per page.</p>
+        <ul class="pagination d-flex justify-content-center">
+            {% if transactions.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page_transactions=1">&laquo; First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page_transactions={{ transactions.previous_page_number }}">Previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo; First</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+            {% endif %}
+
+            {% for num in transactions.paginator.page_range %}
+                {% if num == transactions.number %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page_transactions={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if transactions.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page_transactions={{ transactions.next_page_number }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page_transactions={{ transactions.paginator.num_pages }}">Last &raquo;</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">Last &raquo;</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+
+
+           </div>
+        {% else %}
+           <div class="container">
+               <hr>
+               <h5>Transactions</h5>
+               <p>You have no transactions yet. Start making transactions to see them here.</p>
+               <hr>
+           </div>
+       {% endif %}
+
+
+
+<hr>
+    <div class="container mt-5 mb-4">
+        <h3>Account settings</h3>
+{#        <div class="row">#}
+{#            <div>Display name</div>#}
+{#            <div>#}
+{#                <input type="text" value="Name123" disabled>#}
+{#                <button class="btn btn-secondary">Change</button>#}
+{#            </div>#}
+{#        </div>#}
+        <div class="row">
+            <div>Email</div>
+            <form  id="email-submit" method="POST" action="/change_email/">
+                {% csrf_token %}
+                <input type="email"  name="change_email" value="{{ settings.user.email }}"  id="email-input" disabled>
+                <span class="btn btn-secondary" id="email-btn">Change</span>
+                <button  type="submit" class="btn btn-primary hide-el" id="email-save">Save Changes</button>
+                <label class="text-danger hide-el" id="email-error"> *Incorrect email</label>
+            </form>
+        </div>
+        <div class="row">
+            <div>Phone Number</div>
+            <form id="phone-number-submit" method="POST" action="/change_phone_number/">
+                {% csrf_token %}
+                {% if settings.contact %}
+                    <input type="tel"  name="change_phone_number" value="{{ settings.contact }}" disabled id="phone-number-input">
+                {% else %}
+                    <input type="tel" name="change_phone_number"  disabled id="phone-number-input">
+                {% endif %}
+                <label class="btn btn-secondary" id="phone-number-btn">Change</label>
+                <button type="submit"  class="btn btn-primary hide-el" id="phone-number-save">Save Changes</button>
+                <label class="text-danger hide-el" id="phone-number-error"> *Incorrect phone number</label>
+            </form>
+        </div>
+        <button class="btn btn-secondary d-block mb-2" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</button>
+        <button  class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deactivateAccModal">Deactivate Account</button>
+
+    </div>
+
+
+
+       <div class="modal fade" id="deactivateAccModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 text-danger" id="exampleModalLabel">Account Deactivation Confirmation</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+             <h4>Are you sure you want to deactivate your account?</h4>
+              <p>Deactivating your account means that you will no longer have access to your profile, and your account information, including personal data and preferences, will be permanently removed from our system. This action is irreversible, and you will need to create a new account if you wish to use our services again in the future.</p>
+              <p class="mt-3">Please consider the following before proceeding with account deactivation:</p>
+              <ol class="mt-2">
+                  <li>You will lose all your saved data, including any customized settings, preferences, and history.</li>
+                  <li>You will no longer be able to log in or access your account.</li>
+                  <li>Your profile, including your username and any associated content, will be permanently deleted.</li>
+              </ol>
+              <p class="mt-3">If you still wish to proceed with account deactivation, enter your password and click the "Deactivate Account" button below. If you have changed your mind, you can safely close this dialog without taking any further action.</p>
+              <p class="mt-3">Remember, once you deactivate your account, all your data will be permanently lost.</p>
+
+              <form class="mt-3" method="POST" action="/deactivate_account/">
+                  {% csrf_token %}
+                  <div>
+                      <label class="form-label" style="font-weight: bold">Enter your current password:</label>
+                      <input type="password" class="form-control" name="password">
+                      <button type="submit" class="btn btn-danger mt-2">Deactivate Account</button>
+                  </div>
+              </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Change Password</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form class="modal-body" method="POST" action="/change_password/">
+              {% csrf_token %}
+              <div>
+                  <label class="form-label">Current Password</label>
+                  <input type="password" class="form-control" name="current_password" id="current_password">
+              </div>
+              <div>
+                  <label class="form-label">New Password</label>
+                  <input type="password" class="form-control" name="new_password" id="new_password">
+              </div>
+              <div>
+                  <label class="form-label">Confirm Password</label>
+                  <input type="password" class="form-control" name="confirm_password" id="confirm_password">
+              </div>
+              <button type="submit" class="btn btn-primary mt-2">Submit</button>
+          </form>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <form method="POST" action="/change_password/">
+                  {% csrf_token %}
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+       <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Confirmation</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <h6 id="title"></h6>
+              <p class="text-danger">This action cannot be undone.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <form method="POST" action="/delete_book/">
+                  {% csrf_token %}
+                  <input type="hidden" name="book_id" id="sender">
+                  <button type="submit" class="btn btn-primary">I'm sure</button>
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+       <script>
+            let deleteButtons = document.querySelectorAll(".deleteButton");
+            let refundButtons = document.querySelectorAll(".refund-btn")
+            let input = document.getElementById("sender")
+            let title = document.getElementById("title")
+
+            let email_btn = document.getElementById("email-btn")
+            let email_input = document.getElementById("email-input")
+            let email_save = document.getElementById("email-save")
+
+            let phone_number_btn = document.getElementById("phone-number-btn")
+            let phone_number_input = document.getElementById("phone-number-input")
+            let phone_number_save = document.getElementById("phone-number-save")
+
+
+            deleteButtons.forEach(function (button){
+                button.addEventListener("click", function (){
+                    input.value = Number(button.getAttribute("data-bookid"));
+                    title.innerText = "Are you sure you want to delete \"" + button.getAttribute("data-title")  + "\" ?";
+                })
+            })
+            for (let i = 0; i < refundButtons.length; i++){
+                if (i % 2 !== 0){
+                    refundButtons[i].classList.add("refund-bg-white")
+                }
+                else{
+                    refundButtons[i].classList.add("refund-bg-gray")
+                }
+            }
+
+            email_btn.addEventListener("click", function (button){
+                email_input.disabled = false
+                email_save.classList.remove("hide-el")
+            })
+            phone_number_btn.addEventListener("click", function (){
+                phone_number_input.disabled = false
+                phone_number_save.classList.remove("hide-el")
+            })
+            email_save.addEventListener("click", function (event){
+                event.preventDefault()
+                regex = /^[\w.%+-]+@[\w.-]+\.[a-zA-Z]{2,}$/
+                document.getElementById("email-submit").submit()
+            })
+            phone_number_save.addEventListener("click", function (event){
+                event.preventDefault()
+                const regex = /^07\d{7}$/;
+                const number = document.getElementById("phone-number-input").value
+                if(regex.test(number)){
+                    document.getElementById("phone-number-error").classList.add("hide-el")
+                    document.getElementById("phone-number-submit").submit()
+                }
+                else{
+                    document.getElementById("phone-number-error").classList.remove("hide-el")
+                }
+            })
+            /*document.getElementById("phone-number-submit").addEventListener("submit", function (){
+
+            })*/
+       </script>
+    {% endblock %}
+
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+</body>
+</html>

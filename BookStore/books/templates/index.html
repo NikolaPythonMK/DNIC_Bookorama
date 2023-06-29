@@ -149,7 +149,7 @@
                                         <input type="hidden" name="book_id" value="{{ book.pk }}">
                                         <input type="submit" value="Details" class="btn btn-outline-success details-btn">
                                     </form>
-                                    <form action="/favourites/" class="favourites">
+                                    <form action="/favourites/" method="POST" class="favourites">
                                         {% csrf_token %}
                                         <input type="hidden" name="bookid" value="{{ book.pk }}">
                                         <button type="submit" class="border-0 bg-white">

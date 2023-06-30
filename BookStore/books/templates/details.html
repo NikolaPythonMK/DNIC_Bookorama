@@ -59,7 +59,7 @@
 
     <div class="container-fluid">
         <div class="row  justify-content-center justify-content-md-start">
-            <div class="col-8 col-4 col-md-4 mb-5 d-flex flex-column align-items-center">
+            <div class="col-8 col-lg-4 mb-5 d-flex flex-column align-items-center">
                 <h3 class="text-center">{{ book.title }}</h3>
 
                 {% if book.cover_image %}
@@ -71,7 +71,12 @@
                 <h1 class="display-4 mb-3" style="color: green; font-weight: normal">{{ book.price|floatformat:0  }}$</h1>
 
                 <div class="d-flex flex-column justify-content-center align-items-center w-100">
-                     <a href="./purchase.html" class="btn btn-success w-50 mb-1" data-bs-toggle="modal" data-bs-target="#purchaseModal">Purchase</a>
+                    {% if not user.is_authenticated %}
+                        <p class="text-danger">Please log in so you can save or purchase the book.</p>
+                        <button href="./purchase.html" class="btn btn-success w-50 mb-1" disabled>Purchase</button>
+                    {% else %}
+                        <a href="./purchase.html" class="btn btn-success w-50 mb-1" data-bs-toggle="modal" data-bs-target="#purchaseModal">Purchase</a>
+                    {% endif %}
 {#                    {% if purchase_permission %}#}
 {#                        <a href="./purchase.html" class="btn btn-success w-50 mb-1" data-bs-toggle="modal" data-bs-target="#purchaseModal">Purchase</a>#}
 {#                    {% else %}#}
@@ -81,11 +86,15 @@
                     <form method="POST" action="/save_book_details/" class="w-100 d-flex justify-content-center">
                         {% csrf_token %}
                         <input type="hidden" name="book_id" value="{{ book.pk }}">
-                        <button type="submit" class="btn btn-secondary w-50">Save to favourites</button>
+                        {% if user.is_authenticated%}
+                            <button type="submit" class="btn btn-secondary w-50">Save to favourites</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-secondary w-50" disabled>Save to favourites</button>
+                        {% endif %}
                     </form>
                 </div>
             </div>
-            <div class="col-8 col-md-7">
+            <div class="col-8 col-lg-7">
                 <div class="inf">
                     <h4>Information about the book</h4>
                     <p>Title: {{ book.title }}</p>
@@ -97,7 +106,7 @@
                             <form method="POST" action="/index/" style="display: inline">
                                 {% csrf_token %}
                                 <input type="hidden" name="input_genre" value="{{ g.genre }}">
-                                <button type="submit" class="border-0 bg-white" style="display: inline"><span class="link-genre">{{ g.genre|capfirst }}</span></button>
+                                <button type="submit" class="border-0 bg-white" style="display: inline"><span class="link-genre">{{ g.genre }}</span></button>
                             </form>
                         {% endfor %}
                     </div>

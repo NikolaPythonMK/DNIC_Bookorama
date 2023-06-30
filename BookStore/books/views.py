@@ -95,7 +95,8 @@ def index(request):
                "book_name": book_name,
                "input_genres": input_genres,
                "pagination_books": page_obj,
-               "site": "index"}
+               "site": "index",
+               "user": request.user}
     return render(request, "index.html", context)
 
 
@@ -211,18 +212,18 @@ def details(request):
         rated = None
         phone_number = None
         purchase_permission = True
-        if UserRatedBooks.objects.filter(user=request.user, book=book).exists():
-            rated = UserRatedBooks.objects.get(user=request.user, book=book).rating
+        if request.user.is_authenticated:
+            if UserRatedBooks.objects.filter(user=request.user, book=book).exists():
+                rated = UserRatedBooks.objects.get(user=request.user, book=book).rating
         if UserProfile.objects.get(user=book.user):
             phone_number = UserProfile.objects.get(user=book.user).contact
-        if book.user == request.user:
-            purchase_permission = False
 
         context = {"book": book,
                    "genres": genres,
                    "rated": rated,
                    "phone": phone_number,
-                   "purchase_permission": purchase_permission}
+                   "purchase_permission": purchase_permission,
+                   "user": request.user,}
         return render(request, "details.html", context)
     return redirect("index")
 
@@ -242,8 +243,10 @@ def delete_book(request):
                 b.delete()
             book.delete()
             queryset = Book.objects.filter(user=request.user)
-            context = {"books": queryset, "deleted": True}
-            return render(request, "profile.html", context)
+            #context = {"books": queryset, "deleted": True}
+            messages.success(request, 'Your book has been deleted successfully.')
+            return redirect('profile')
+            #return render(request, "profile.html", context)
         except Book.DoesNotExist:
             return redirect("profile")
     return redirect("index")
@@ -399,7 +402,6 @@ def refund_request(request):
             queryset = Book.objects.filter(user=request.user)
             transactions = BookPurchases.objects.filter(user=request.user)
             profile_settings = UserProfile.objects.get(user=request.user)
-            print("email: ", profile_settings.user.email)
             context = {"books": queryset, "transactions": transactions, "message": message,
                        "refund_success": refund_success,
                        "settings": profile_settings}
